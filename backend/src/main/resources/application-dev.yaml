@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/codeduels
+    username: dev
+    password: dev
+  jpa:
+      hibernate:
+       ddl-auto: update
+      show-sql: true
+jwt:
+  secret: 5294Wn8A6yM8OfbSAE2yvmh8DArjTaStcR2CpK5oq7d
+  access-expiration-ms: 900000        # 15 min
+  refresh-expiration-ms: 604800000    # 7 days
+logging:
+  level:
+    com.codeduels: DEBUG

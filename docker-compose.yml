@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: codeduels-db
+    environment:
+      POSTGRES_DB: codeduels
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: codeduel_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+#  sentinel_redis:
+#    image: redis:7-alpine
+#    container_name: codeduel_sentinel_redis
+#    ports:
+#      - "6380:6379"
+#    volumes:
+#      - sentinel_redis_data:/data
+#    restart: always
+
+volumes:
+  pgdata:
+  redis_data:
+#  sentinel_redis_data:

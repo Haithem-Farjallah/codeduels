@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: coding-platform
+  profiles:
+    active: dev
