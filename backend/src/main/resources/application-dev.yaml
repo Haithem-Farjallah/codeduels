@@ -14,3 +14,12 @@ jwt:
 logging:
   level:
     com.codeduels: DEBUG
+
+app:
+  avatar:
+    base-url: https://api.dicebear.com/9.x/fun-emoji/svg/
+  judge0:
+    api:
+      base-url: http://localhost:2358
+      host: judge0-ce.p.rapidapi.com
+      key: abfd28b9fbmsh0cf30ad7e62ff74p199ba0jsn38023c8c561f

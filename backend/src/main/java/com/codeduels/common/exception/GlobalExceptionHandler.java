@@ -28,4 +28,9 @@ public class GlobalExceptionHandler {
         return createResponse(HttpStatus.CONFLICT,exception.getMessage());
     }
 
+    @ExceptionHandler(UnauthorisedException.class)
+    public ResponseEntity<StandardResponse<Void>> handleException(UnauthorisedException exception){
+        return createResponse(HttpStatus.UNAUTHORIZED,exception.getMessage());
+    }
+
 }

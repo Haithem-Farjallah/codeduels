@@ -14,7 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -37,7 +39,7 @@ public class AuthServiceTest {
         when(accountRepository.findByEmail("h@test.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("password123")).thenReturn("$2a$hashed");
         when(roleRepository.findByType(RoleType.ROLE_USER))
-                .thenReturn(Optional.of(new Role(RoleType.ROLE_USER,"Test Role")));
+                .thenReturn(Optional.of(new Role(RoleType.ROLE_USER,"Test Role", Set.of())));
 
         authService.register(new RegisterRequest("h@test.com", "password123", "haithem"));
 

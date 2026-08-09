@@ -5,6 +5,7 @@ import com.codeduels.auth.dto.RegisterRequest;
 import com.codeduels.auth.dto.TokenResponse;
 import com.codeduels.auth.service.AuthService;
 import com.codeduels.auth.service.LoginResult;
+import com.codeduels.common.api.ApiPath;
 import com.codeduels.common.api.StandardResponse;
 import com.codeduels.common.exception.InvalidCredentialsException;
 import jakarta.validation.Valid;
@@ -14,7 +15,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Duration;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping(ApiPath.AUTH_BASE)
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
@@ -31,14 +35,14 @@ public class AuthController {
     private final AuthService authService;
 
 
-    @PostMapping("/register")
+    @PostMapping(ApiPath.Register)
     public ResponseEntity<StandardResponse<TokenResponse>> register(@Valid @RequestBody RegisterRequest registerRequest) {
         authService.register(registerRequest);
         log.debug("Registered new user");
         return ResponseEntity.status(HttpStatus.CREATED).body(StandardResponse.success(null));
     }
 
-    @PostMapping("/login")
+    @PostMapping(ApiPath.Login)
     public ResponseEntity<StandardResponse<TokenResponse>> login(@RequestBody LoginRequest loginRequest) {
         LoginResult tokens = authService.login(loginRequest);
 
@@ -55,7 +59,7 @@ public class AuthController {
                 .body(StandardResponse.success(new TokenResponse(tokens.accessToken())));
     }
 
-    @PostMapping("/refresh")
+    @GetMapping(ApiPath.Refresh)
     public ResponseEntity<StandardResponse<TokenResponse>> refresh(
             @CookieValue(value = "refresh_token", required = false) String refreshToken) {
         log.debug("Refresh token{}", refreshToken);
@@ -74,5 +78,4 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(StandardResponse.success(new TokenResponse(result.accessToken())));
     }
-
 }
