@@ -8,6 +8,7 @@ import com.codeduels.problem.dto.ProblemRequest;
 import com.codeduels.problem.dto.ProblemResponse;
 import com.codeduels.problem.dto.ProblemSummaryResponse;
 import com.codeduels.problem.dto.TestCaseDto;
+import com.codeduels.problem.model.Difficulty;
 import com.codeduels.problem.model.Problem;
 import com.codeduels.problem.model.ProblemStatus;
 import com.codeduels.problem.model.Tag;
@@ -24,7 +25,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -106,6 +110,11 @@ public class ProblemService {
         Problem problem = problemRepository.findBySlug(slug)
                 .orElseThrow(() -> new RessourceNotFoundException("Problem not found"));
         problem.setStatus(ProblemStatus.ARCHIVED);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Problem> pickRandomProblem(Difficulty difficulty, UUID playerOneId, UUID playerTwoId) {
+        return problemRepository.pickRandomUnsolvedByEither(difficulty.name(), playerOneId, playerTwoId);
     }
 
 

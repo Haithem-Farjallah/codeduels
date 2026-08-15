@@ -16,6 +16,8 @@ logging:
     com.codeduels: DEBUG
 
 app:
+  frontend:
+    url: http://localhost:5732
   avatar:
     base-url: https://api.dicebear.com/9.x/fun-emoji/svg/
   judge0:

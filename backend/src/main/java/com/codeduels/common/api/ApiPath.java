@@ -8,6 +8,7 @@ public final class ApiPath {
     public static final String AUTH_BASE= API_BASE + "/auth";
     public static final String PROBLEMS = API_BASE + "/problems";
     public static final String SUBMISSIONS = API_BASE + "/submissions";
+    public static final String MATCH = API_BASE + "/match";
 
     //Path variables
     public static final String PATH_ID     = "/{id}";

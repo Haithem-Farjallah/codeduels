@@ -85,6 +85,9 @@ public class SubmissionService {
         Submission submission = submissionRepository.findById(submissionId)
                 .orElseThrow(() -> new EntityNotFoundException("Submission not found with id: " + submissionId));
 
+        if (!submission.getUserId().equals(currentUser.getId())) {
+            throw new RessourceNotFoundException("Submission not found");
+        }
         Problem problem = problemRepository.findById(submission.getProblemId())
                 .orElseThrow(() -> new EntityNotFoundException("Problem not found with id: " + submission.getProblemId()));
 
