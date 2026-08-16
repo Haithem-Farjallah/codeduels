@@ -13,6 +13,7 @@ import java.util.UUID;
 public class SubmissionRequest {
     @NotNull
     private UUID problemId;
+    @NotNull
     private UUID matchId;
     @NotBlank
     private String code;

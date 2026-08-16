@@ -17,11 +17,11 @@ public interface ProblemRepository extends JpaRepository<Problem, UUID>, JpaSpec
     boolean existsBySlug(String slug);
 
     @Query(value = """
-        SELECT p.* FROM problems p
+        SELECT p.* FROM problem p
         WHERE p.status = 'PUBLISHED'
           AND p.difficulty = :difficulty
           AND p.id NOT IN (
-              SELECT s.problem_id FROM submissions s
+              SELECT s.problem_id FROM submission s
               WHERE s.status = 'ACCEPTED'
                 AND s.user_id IN (:playerOneId, :playerTwoId)
           )

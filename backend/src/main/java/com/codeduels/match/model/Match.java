@@ -18,7 +18,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "matches", indexes = {
+@Table(name = "match", indexes = {
         @Index(name = "idx_match_room_code", columnList = "room_code"),
         @Index(name = "idx_match_player_one", columnList = "player_one_id"),
         @Index(name = "idx_match_player_two", columnList = "player_two_id")

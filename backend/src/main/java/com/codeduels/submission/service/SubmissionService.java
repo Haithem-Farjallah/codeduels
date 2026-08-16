@@ -4,6 +4,10 @@ import com.codeduels.common.exception.ConflictException;
 import com.codeduels.common.exception.RessourceNotFoundException;
 import com.codeduels.common.security.CurrentUser;
 import com.codeduels.judge0.service.Judge0Service;
+import com.codeduels.match.model.Match;
+import com.codeduels.match.model.MatchStatus;
+import com.codeduels.match.repository.MatchRepository;
+import com.codeduels.match.service.MatchService;
 import com.codeduels.problem.model.Problem;
 import com.codeduels.problem.model.ProblemStatus;
 import com.codeduels.problem.repository.ProblemRepository;
@@ -32,6 +36,8 @@ public class SubmissionService {
     private final ProblemRepository problemRepository;
     private final CurrentUser currentUser;
     private final Judge0Service judge0Service;
+    private final MatchRepository matchRepository;
+    private final MatchService matchService;
 
     @Transactional
     public SubmissionResponse create(SubmissionRequest request) {
@@ -42,9 +48,18 @@ public class SubmissionService {
         if (problem.getStatus() != ProblemStatus.PUBLISHED) {
             throw new ConflictException("Submissions are only allowed for published problems");
         }
-        //TODO: match validation block deferred — practice mode only for now
-
-
+        Match match = matchRepository.findById(request.getMatchId())
+                .orElseThrow(() -> new RessourceNotFoundException("Match not found"));
+        if (match.getStatus() != MatchStatus.ACTIVE) {
+            throw new ConflictException("This match is not active");
+        }
+        UUID userId = currentUser.getId();
+        if (!userId.equals(match.getPlayerOneId()) && !userId.equals(match.getPlayerTwoId())) {
+            throw new ConflictException("You are not a participant in this match");
+        }
+        if (!request.getProblemId().equals(match.getProblemId())) {
+            throw new ConflictException("This problem does not belong to the match");
+        }
         Submission submission = Submission.builder()
                 .userId(currentUser.getId())
                 .problemId(request.getProblemId())
@@ -68,6 +83,7 @@ public class SubmissionService {
         savedSubmission.setStdout(submissionResult.getStdout());
         savedSubmission.setStderr(submissionResult.getStderr());
 
+        matchService.processSubmissionResult(savedSubmission.getMatchId(),savedSubmission.getUserId(),savedSubmission.getStatus());
         return SubmissionResponse.builder()
                 .submissionId(savedSubmission.getId())
                 .build();

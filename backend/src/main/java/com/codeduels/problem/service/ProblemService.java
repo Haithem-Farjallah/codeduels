@@ -138,4 +138,10 @@ public class ProblemService {
                 .trim()
                 .replaceAll("\\s+", "-");
     }
+
+
+    public ProblemResponse getById(UUID problemId) {
+        Problem problem = problemRepository.findById(problemId).orElseThrow(() -> new RessourceNotFoundException("Problem not found"));
+        return ProblemResponse.fromEntity(problem);
+    }
 }

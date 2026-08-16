@@ -33,7 +33,7 @@ public class Submission extends UuidBaseEntity {
     @Column(name = "problem_id", nullable = false)
     private UUID problemId;
 
-    @Column(name = "match_id")
+    @Column(name = "match_id",nullable = false)
     private UUID matchId;
 
     @Column(columnDefinition = "TEXT", nullable = false)

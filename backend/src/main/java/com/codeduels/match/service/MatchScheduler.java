@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -22,7 +23,8 @@ public class MatchScheduler {
     private final ProblemService problemService;
 
     @Scheduled(fixedRate = 15000)
-    public void startScheduledMatches(){
+    @Transactional
+    public void startScheduledMatches() {
         List<Match> matchesToStart = matchRepository.findAllByStatusAndScheduledAtBefore(
                 MatchStatus.SCHEDULED,
                 Instant.now()
@@ -36,7 +38,7 @@ public class MatchScheduler {
 
         for (Match match : matchesToStart) {
             try {
-                Optional<Problem> problem = problemService.pickRandomProblem(match.getDifficulty(),match.getPlayerOneId(),match.getPlayerTwoId());
+                Optional<Problem> problem = problemService.pickRandomProblem(match.getDifficulty(), match.getPlayerOneId(), match.getPlayerTwoId());
 
                 if (problem.isEmpty()) {
                     log.warn("No {} problem available for match {}; canceling",
