@@ -3,6 +3,7 @@ package com.codeduels.problem.controller;
 import com.codeduels.common.api.ApiPath;
 import com.codeduels.common.api.StandardResponse;
 import com.codeduels.common.security.Authz;
+import com.codeduels.problem.dto.ProblemCreatedResponse;
 import com.codeduels.problem.dto.ProblemFilter;
 import com.codeduels.problem.dto.ProblemRequest;
 import com.codeduels.problem.dto.ProblemResponse;
@@ -23,8 +24,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RequestMapping(ApiPath.PROBLEMS)
 @RequiredArgsConstructor
@@ -52,7 +56,7 @@ public class ProblemController {
 
     @PreAuthorize(Authz.PROBLEM_CREATE)
     @PostMapping
-    public ResponseEntity<StandardResponse<ProblemResponse>> createProblem(
+    public ResponseEntity<StandardResponse<ProblemCreatedResponse>> createProblem(
             @Valid @RequestBody ProblemRequest problemRequest
             ){
         return ResponseEntity.status(HttpStatus.CREATED).body(StandardResponse.success(problemService.createProblem(problemRequest)));

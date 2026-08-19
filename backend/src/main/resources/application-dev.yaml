@@ -7,6 +7,18 @@ spring:
       hibernate:
        ddl-auto: update
       show-sql: true
+  data:
+      redis:
+          host: localhost
+          port: 6379
+  cloud:
+      aws:
+          credentials:
+              access-key: ${AWS_ACCESS_KEY_ID}
+              secret-key: ${AWS_SECRET_ACCESS_KEY}
+          region:
+              static: eu-central-1
+
 jwt:
   secret: 5294Wn8A6yM8OfbSAE2yvmh8DArjTaStcR2CpK5oq7d
   access-expiration-ms: 900000        # 15 min
@@ -16,6 +28,15 @@ logging:
     com.codeduels: DEBUG
 
 app:
+
+  cache:
+      test-cases-ttl-minutes: 60
+  sqs:
+      submission-queue: codeduels-submission
+  s3:
+      bucket: codeduels-testcases
+  internal:
+      secret: ${INTERNAL_API_SECRET:lambdaSecretTest}
   frontend:
     url: http://localhost:5732
   avatar:

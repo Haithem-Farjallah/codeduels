@@ -33,6 +33,13 @@ public class SubmissionController {
 
     private final SubmissionService submissionService;
 
+
+//    @PostMapping("/api/sqs-test")
+//    public ResponseEntity<String> send(@RequestParam String text) {
+//        sqsTemplate.send("codeduels-submissions", text);
+//        return ResponseEntity.ok("sent");
+//    }
+
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<StandardResponse<SubmissionResponse>> submit(

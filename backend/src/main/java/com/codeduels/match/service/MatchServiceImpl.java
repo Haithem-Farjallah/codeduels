@@ -54,6 +54,8 @@ public class MatchServiceImpl implements MatchService {
     private final SubmissionRepository submissionRepository;
     private final ProblemRepository problemRepository;
     private final UserRepository userRepository;
+    private final MatchNotificationService matchNotificationService;
+
 
     @Value("${app.frontend.url}")
     private String frontendUrl;
@@ -109,8 +111,7 @@ public class MatchServiceImpl implements MatchService {
         log.info("User {} joined match {}; scheduled to start at {}",
                 joinerId, match.getId(), match.getScheduledAt());
 
-        // TODO(stomp): notifyPlayerJoined(match.getId(), joinerId)
-        // TODO(stomp): notifyCountdownStarted(match.getId(), "LOBBY_COUNTDOWN_STARTED", scheduledAt)
+       matchNotificationService.notifyPlayerJoined(match.getId(),joinerId, scheduledTime);
 
         return JoinMatchResponse.builder()
                 .matchId(match.getId())
@@ -150,7 +151,9 @@ public class MatchServiceImpl implements MatchService {
                 match.setPlayerTwoPenalties(match.getPlayerTwoPenalties() + 1);
             }
             log.info("Player {} penalty on match {} (verdict {})", userId, matchId, status);
-            // TODO(stomp): notifyMatchUpdate(matchId, penalties)
+            matchNotificationService.notifyMatchUpdate(matchId,
+                    match.getPlayerOnePenalties(),
+                    match.getPlayerTwoPenalties());
         }
     }
 
@@ -165,6 +168,12 @@ public class MatchServiceImpl implements MatchService {
         if (!callerId.equals(match.getPlayerOneId()) && !callerId.equals(match.getPlayerTwoId())) {
             throw new RessourceNotFoundException("Match not found");
         }
+
+        return buildState(match);
+    }
+
+    @Override
+    public MatchStateResponse buildState(Match match) {
 
         ProblemResponse problem = null;
         if (match.getProblemId() != null) {
@@ -217,6 +226,7 @@ public class MatchServiceImpl implements MatchService {
         match.setEndedAt(Instant.now());
         match.setWinnerId(winnerId);
         log.info("Match {} completed. Winner: {}", matchId, winnerId != null ? winnerId : "DRAW");
+        matchNotificationService.notifyMatchEnd(match.getId(), buildResults(match));
     }
 
     @Override
@@ -235,8 +245,13 @@ public class MatchServiceImpl implements MatchService {
             throw new ConflictException("Results are not available until the match is completed");
         }
 
+        return buildResults(match);
+    }
+
+    private MatchResultResponse buildResults(Match match) {
+
         List<Submission> submissions =
-                submissionRepository.findByMatchIdOrderByCreatedAtAsc(matchId);
+                submissionRepository.findByMatchIdOrderByCreatedAtAsc(match.getId());
 
         String problemTitle = problemRepository.findById(match.getProblemId())
                 .map(Problem::getTitle)
@@ -395,7 +410,5 @@ public class MatchServiceImpl implements MatchService {
             default -> "UNKNOWN";
         };
     }
-
-
 
 }

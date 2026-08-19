@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h3>open the console</h3>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+<script>
+    const client = new StompJs.Client({ brokerURL: 'ws://localhost:8080/api/ws' });
+
+    client.onConnect = () => {
+        console.log('CONNECTED');
+        client.subscribe('/topic/match/0300d77a-eadb-40d1-add7-4b0ef2108aac', (message) => {
+            console.log('GOT:', message.body);
+        });
+    };
+
+    client.onStompError = (frame) => console.error('ERROR:', frame);
+    client.activate();
+</script>
+</body>
+</html>

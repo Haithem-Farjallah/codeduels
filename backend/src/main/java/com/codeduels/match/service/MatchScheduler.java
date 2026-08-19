@@ -3,6 +3,7 @@ package com.codeduels.match.service;
 import com.codeduels.match.model.Match;
 import com.codeduels.match.model.MatchStatus;
 import com.codeduels.match.repository.MatchRepository;
+import com.codeduels.notification.NotificationService;
 import com.codeduels.problem.model.Problem;
 import com.codeduels.problem.service.ProblemService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ import java.util.Optional;
 public class MatchScheduler {
     private final MatchRepository matchRepository;
     private final ProblemService problemService;
+    private final MatchService matchService;
+    private final MatchNotificationService matchNotificationService;
 
     @Scheduled(fixedRate = 15000)
     @Transactional
@@ -44,7 +47,7 @@ public class MatchScheduler {
                     log.warn("No {} problem available for match {}; canceling",
                             match.getDifficulty(), match.getId());
                     cancel(match);
-                    // TODO(stomp): notifyMatchCanceled(match.getId(), "No suitable problem available")
+                    matchNotificationService.notifyMatchCanceled(match.getId(),"No suitable problem available");
                     continue;
                 }
 
@@ -54,13 +57,12 @@ public class MatchScheduler {
 
                 log.info("Match {} started with problem {}", match.getId(), match.getProblemId());
 
-                // TODO(stomp): notifyMatchStart(match.getId(), problemId, usernames)
-                // TODO(stomp): notifyCountdownStarted(match.getId(), "MATCH_COUNTDOWN_STARTED", startedAt + duration)
+                matchNotificationService.notifyMatchStart(match.getId(),matchService.buildState(match));
 
             } catch (Exception e) {
                 log.error("Failed to start match {}; canceling", match.getId(), e);
                 cancel(match);
-                // TODO(stomp): notifyMatchCanceled(match.getId(), "Internal error while starting the match")
+                matchNotificationService.notifyMatchCanceled(match.getId(),"Internal error while starting the match");
             }
         }
     }
