@@ -32,5 +32,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<StandardResponse<Void>> handleException(UnauthorisedException exception){
         return createResponse(HttpStatus.UNAUTHORIZED,exception.getMessage());
     }
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<StandardResponse<Void>> handleException(TooManyRequestsException exception){
+        return createResponse(HttpStatus.TOO_MANY_REQUESTS,exception.getMessage());
+    }
 
 }

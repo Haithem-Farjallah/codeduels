@@ -28,7 +28,8 @@ logging:
     com.codeduels: DEBUG
 
 app:
-
+  ratelimit:
+    submissions-per-minute: 10
   cache:
       test-cases-ttl-minutes: 60
   sqs:

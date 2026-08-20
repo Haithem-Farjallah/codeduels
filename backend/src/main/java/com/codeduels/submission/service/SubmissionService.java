@@ -3,6 +3,8 @@ package com.codeduels.submission.service;
 import com.codeduels.common.AWS.service.S3Service;
 import com.codeduels.common.exception.ConflictException;
 import com.codeduels.common.exception.RessourceNotFoundException;
+import com.codeduels.common.exception.TooManyRequestsException;
+import com.codeduels.common.ratelimit.RateLimiterService;
 import com.codeduels.common.security.CurrentUser;
 import com.codeduels.judge0.service.Judge0Service;
 import com.codeduels.match.model.Match;
@@ -27,12 +29,14 @@ import com.codeduels.submission.repository.SubmissionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,12 +53,20 @@ public class SubmissionService {
     private final MatchService matchService;
     private final ApplicationEventPublisher eventPublisher;
     private final NotificationService notificationService;
-    private final S3Service s3Service;
     private final ProblemService problemService;
+    private final RateLimiterService rateLimiterService;
 
+    @Value("${app.ratelimit.submissions-per-minute}")
+    private int submissionsPerMinute;
 
     @Transactional
     public SubmissionResponse create(SubmissionRequest request) {
+
+        UUID userId = currentUser.getId();
+        if (!rateLimiterService.tryConsume("ratelimit:submissions:" + userId,
+                submissionsPerMinute, Duration.ofMinutes(1))) {
+            throw new TooManyRequestsException("Too many submissions — please slow down");
+        }
 
         Problem problem = problemRepository.findById(request.getProblemId())
                 .orElseThrow(() -> new RessourceNotFoundException("Problem not found"));
@@ -67,7 +79,7 @@ public class SubmissionService {
         if (match.getStatus() != MatchStatus.ACTIVE) {
             throw new ConflictException("This match is not active");
         }
-        UUID userId = currentUser.getId();
+
         if (!userId.equals(match.getPlayerOneId()) && !userId.equals(match.getPlayerTwoId())) {
             throw new ConflictException("You are not a participant in this match");
         }
