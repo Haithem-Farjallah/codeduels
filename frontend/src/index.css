@@ -3,6 +3,13 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+
+@import '@fontsource/poppins/300.css';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -46,6 +53,17 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+
+
+
+}
+
+@theme{
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --color-surface: #333437;
+  --color-primary: #925FE2;
+  --color-dark:#1C1D21;
+  --color-primary-light: #9C6FE4;
 }
 
 :root {
