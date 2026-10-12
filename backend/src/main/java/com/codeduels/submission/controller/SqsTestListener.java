@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SqsTestListener {
 
-    @SqsListener("codeduels-submissions")
+    @SqsListener("codeduels-submission")
     public void receive(String message) {
         log.info("RECEIVED FROM SQS: {}", message);
     }
