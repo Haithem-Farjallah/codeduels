@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: codeduels-sentinel
+  main:
+    web-application-type: none
+  data:
+    redis:
+      host: localhost
+      port: 6380          # the Sentinel's own Redis (sentinel_redis in docker-compose)
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
+      region:
+        static: eu-central-1
+
+logging:
+  level:
+    com.codeduels.sentinel: DEBUG
+
+sentinel:
+  sqs:
+    match-watch-queue: match-watch-queue
+    match-result-queue: match-result-queue
+  codeforces:
+    base-url: https://codeforces.com/api
+    min-request-interval-ms: 2000   # Codeforces allows ~1 call per 2s per client — shared by every watched handle
+    fetch-count: 30                 # newest submissions fetched per poll
+  polling:
+    loop-delay-ms: 500
+    min-interval-seconds: 5         # right after activity, while judging, and in the endgame
+    max-interval-seconds: 30        # cap for idle handles
+    backoff-multiplier: 2.0
+    endgame-seconds: 120            # poll at the minimum interval this close to the end
+    final-grace-seconds: 45         # keep watching after the end for submissions still being judged

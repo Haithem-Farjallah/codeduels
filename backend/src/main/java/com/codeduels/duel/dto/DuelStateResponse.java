@@ -28,5 +28,10 @@ public class DuelStateResponse {
     private int durationMinutes;
     private long secondsRemaining;
 
+    private int startDelayMinutes;
+
     private String winnerHandle;
+
+    /** Newest first */
+    private List<DuelSubmissionDto> submissions;
 }

@@ -1,7 +1,7 @@
 package com.codeduels.duel.util;
 
 
-import jakarta.validation.ValidationException;
+import com.codeduels.common.exception.BadRequestException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class CodeforcesUrlParser {
     public String parse(String url) {
         Matcher matcher = CF_PATTERN.matcher(url);
         if (!matcher.find()) {
-            throw new ValidationException("Not a valid Codeforces problem URL: " + url);
+            throw new BadRequestException("Not a valid Codeforces problem URL: " + url);
         }
         String contestId = matcher.group(1) != null ? matcher.group(1) : matcher.group(3);
         String index = matcher.group(2) != null ? matcher.group(2) : matcher.group(4);

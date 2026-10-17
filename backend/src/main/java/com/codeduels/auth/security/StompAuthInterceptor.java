@@ -1,6 +1,8 @@
 package com.codeduels.auth.security;
 
 import com.codeduels.auth.security.jwt.JwtService;
+import com.codeduels.duel.repository.DuelHistoryRepository;
+import com.codeduels.duel.repository.DuelStateRepository;
 import com.codeduels.match.model.Match;
 import com.codeduels.match.repository.MatchRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,10 @@ public class StompAuthInterceptor implements ChannelInterceptor {
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
     private final MatchRepository matchRepository;
+    // Repositories, not DuelService: the service depends on SimpMessagingTemplate, which would
+    // close a cycle back through the WebSocket config to this interceptor
+    private final DuelStateRepository duelStateRepository;
+    private final DuelHistoryRepository duelHistoryRepository;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -74,9 +80,28 @@ public class StompAuthInterceptor implements ChannelInterceptor {
                     throw new MessagingException("Not a participant in this match");
                 }
             }
+
+            if (destination != null && destination.startsWith("/topic/duel/")) {
+                UUID userId = currentUserId(accessor);
+                UUID duelId = UUID.fromString(
+                        destination.substring("/topic/duel/".length()));
+
+                if (!isDuelParticipant(duelId, userId)) {
+                    log.warn("[WS] user {} denied subscription to duel {}", userId, duelId);
+                    throw new MessagingException("Not a participant in this duel");
+                }
+            }
         }
 
         return message;
+    }
+
+    private boolean isDuelParticipant(UUID duelId, UUID userId) {
+        return duelStateRepository.findById(duelId)
+                .map(duel -> userId.equals(duel.getPlayerOneId()) || userId.equals(duel.getPlayerTwoId()))
+                .or(() -> duelHistoryRepository.findByDuelId(duelId)
+                        .map(h -> userId.equals(h.getPlayerOneId()) || userId.equals(h.getPlayerTwoId())))
+                .orElse(false);
     }
 
     private UUID currentUserId(StompHeaderAccessor accessor) {

@@ -88,13 +88,25 @@ public class DataSeeder {
                     .avatarUrl(avatarBaseUrl+"admin")
                     .build();
 
+            User user =User.builder()
+                    .username("user")
+                    .avatarUrl(avatarBaseUrl+"user")
+                    .build();
+
             Account adminAccount = Account.builder()
                     .email("admin@codeduels.com")
                     .password(passwordEncoder.encode("admin"))
                     .roles(Set.of(adminRole))
                     .user(admin)
                     .build();
+            Account userAccount = Account.builder()
+                    .email("user@codeduels.com")
+                    .password(passwordEncoder.encode("user3100"))
+                    .roles(Set.of(userRole))
+                    .user(user)
+                    .build();
             accountRepository.save(adminAccount);
+            accountRepository.save(userAccount);
             log.info("Accounts added successfully");
 
             Tag arrays = new Tag("arrays");

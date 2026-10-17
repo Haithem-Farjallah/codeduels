@@ -3,6 +3,7 @@ package com.codeduels.common.exception;
 import com.codeduels.common.api.StandardResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -35,6 +36,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TooManyRequestsException.class)
     public ResponseEntity<StandardResponse<Void>> handleException(TooManyRequestsException exception){
         return createResponse(HttpStatus.TOO_MANY_REQUESTS,exception.getMessage());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<StandardResponse<Void>> handleException(BadRequestException exception){
+        return createResponse(HttpStatus.BAD_REQUEST,exception.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<StandardResponse<Void>> handleException(MethodArgumentNotValidException exception){
+        String message = exception.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(error -> error.getDefaultMessage())
+                .orElse("Invalid request");
+        return createResponse(HttpStatus.BAD_REQUEST,message);
     }
 
 }

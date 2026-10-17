@@ -34,12 +34,20 @@ app:
       test-cases-ttl-minutes: 60
   sqs:
       submission-queue: codeduels-submission
+      match-watch-queue: match-watch-queue      # duel start → Sentinel
+      match-result-queue: match-result-queue    # Sentinel verdicts → duel scoring
   s3:
       bucket: codeduels-testcases
   internal:
       secret: ${INTERNAL_API_SECRET:lambdaSecretTest}
   frontend:
-    url: http://localhost:5732
+    url: http://localhost:5173
+  codeforces:
+    base-url: https://codeforces.com/api
+  duel:
+    scheduler-interval-ms: 5000
+    completion-grace-seconds: 60    # wait for last-second verdicts before declaring a winner
+    start-timeout-seconds: 300
   avatar:
     base-url: https://api.dicebear.com/9.x/fun-emoji/svg/
   judge0:

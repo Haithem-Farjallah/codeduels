@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,10 @@ public class DuelData {
     private List<String> problemIds;
     private List<String> problemUrls;
 
+    /** problemId → name, best effort from the Codeforces problemset */
+    @Builder.Default
+    private Map<String, String> problemNames = new HashMap<>();
+
     private UUID playerOneId;
     private String playerOneHandle;
     private UUID playerTwoId;
@@ -38,6 +43,11 @@ public class DuelData {
 
     private String winnerHandle;
 
+    /** handle → score */
     @Builder.Default
     private Map<String, PlayerScore> scoreboard = new HashMap<>();
+
+    /** Every verdict received, in arrival order — also the dedupe set for at-least-once SQS delivery */
+    @Builder.Default
+    private List<DuelSubmission> submissions = new ArrayList<>();
 }

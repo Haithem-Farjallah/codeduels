@@ -13,7 +13,10 @@ import java.util.UUID;
 public class DuelHistoryItem {
     private UUID duelId;
     private String result;
+    private String yourHandle;
     private String opponentHandle;
+    private String opponentUsername;
+    private int problemCount;
     private int yourSolved;
     private long yourPenalty;
     private int opponentSolved;
