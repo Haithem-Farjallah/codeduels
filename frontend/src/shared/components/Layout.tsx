@@ -31,7 +31,15 @@ export const Layout = () => {
               New Match
             </NavLink>
             <NavLink
-              to="/history"
+              to="/duels/new"
+              className={({ isActive }) =>
+                isActive ? 'text-white' : 'text-white/50 hover:text-white/80'
+              }
+            >
+              CF Duel
+            </NavLink>
+            <NavLink
+              to="/duels/history"
               className={({ isActive }) =>
                 isActive ? 'text-white' : 'text-white/50 hover:text-white/80'
               }

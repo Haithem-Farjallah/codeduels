@@ -64,6 +64,9 @@
   --color-primary: #925FE2;
   --color-dark:#1C1D21;
   --color-primary-light: #9C6FE4;
+  /* existing components use brand / brand-light — same palette values */
+  --color-brand: #925FE2;
+  --color-brand-light: #9C6FE4;
 }
 
 :root {

@@ -21,16 +21,17 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
-#  sentinel_redis:
-#    image: redis:7-alpine
-#    container_name: codeduel_sentinel_redis
-#    ports:
-#      - "6380:6379"
-#    volumes:
-#      - sentinel_redis_data:/data
-#    restart: always
+  # The Sentinel's own store of monitored duels — separate from the backend's Redis on purpose
+  sentinel_redis:
+    image: redis:7-alpine
+    container_name: codeduel_sentinel_redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - sentinel_redis_data:/data
+    restart: unless-stopped
 
 volumes:
   pgdata:
   redis_data:
-#  sentinel_redis_data:
+  sentinel_redis_data:

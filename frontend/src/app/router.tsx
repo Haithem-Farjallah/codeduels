@@ -1,6 +1,7 @@
 import { LoginPage,RegisterPage } from '@/features/auth';
 import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
 import { HomePage } from '@/features/home/pages/HomePage';
+import { CreateDuelPage, DuelHistoryPage, DuelPage, JoinDuelPage } from '@/features/duel';
 import { Layout } from '@/shared/components/Layout';
 
 import { createBrowserRouter, RouterProvider } from 'react-router';
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
         element: <Layout />,            
         children: [
           { path: '/problems', element: <div>problems</div> },
+          { path: '/duels/new', element: <CreateDuelPage /> },
+          { path: '/duels/join', element: <JoinDuelPage /> },
+          { path: '/duels/history', element: <DuelHistoryPage /> },
+          { path: '/duels/:duelId', element: <DuelPage /> },
         ],
       },
     ],

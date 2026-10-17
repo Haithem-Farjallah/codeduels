@@ -33,7 +33,7 @@ api.interceptors.response.use(
 
       try {
         const { data:response } = await axios.post<StandardResponse<LoginResponse>>(
-          `${import.meta.env.VITE_API_URL}${ENDPOINTS.auth.refresh}`,
+          `${api.defaults.baseURL}${ENDPOINTS.auth.refresh}`,
           {},
           { withCredentials: true }            
         );

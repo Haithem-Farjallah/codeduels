@@ -30,7 +30,7 @@ export const HomePage = () => {
         />
 
         <ModeCard
-          badge={{ icon: Zap, label: 'COMING SOON' }}
+          badge={{ icon: Zap, label: 'ICPC RULES' }}
           icon={Swords}
           title="Codeforces Duel"
           description={<>Battle on problems from Codeforces with <span className="text-white/70">ICPC scoring</span> — points plus time penalty.</>}
@@ -39,7 +39,10 @@ export const HomePage = () => {
             'Official ICPC penalty rules',
             'Submit directly on Codeforces',
           ]}
-          disabled
+          actions={[
+            { label: 'Create Duel', to: '/duels/new', variant: 'primary' },
+            { label: 'Join Duel', to: '/duels/join', variant: 'secondary' },
+          ]}
         />
       </section>
 
